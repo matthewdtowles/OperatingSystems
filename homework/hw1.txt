@@ -1,0 +1,7 @@
+Answer the following 3 questions:
+
+1) Compare and contrast System Software and Application Software.  Give an example of each.
+
+2) Abstraction is an important quality of an Operating System.  Explain how Operating Systems and abstraction are related.
+
+3) Why do user applications not run at the kernel layer?
