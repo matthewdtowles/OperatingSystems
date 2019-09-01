@@ -1,0 +1,9 @@
+Find common features and differences between processes and threads from several points of view (usage, size, execution, life cycle, implementation, etc.)
+
+Then focus (and post here) on one common feature and/or difference that you found.
+
+Please avoid repetition of the same list of similarities and differences.
+
+I would suggest to pick one similarity / difference and elaborate a little bit on that subject, perhaps with concrete examples on how things are done on a certain OS or another.
+
+Examples always help understanding the topic.

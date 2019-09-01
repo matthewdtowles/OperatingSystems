@@ -1,0 +1,3 @@
+Consider chapter 12.6 on Parallel Computing from the eReadings, describing both the advantages and the limits of Parallel Computing.
+Give an example of a problem that can be solved with a computer program. Identify the part(s) of the problem that can be done in parallel, and the part(s) that must be done serially.
+Speculate on the efficiency of a parallel implementation of this problem.

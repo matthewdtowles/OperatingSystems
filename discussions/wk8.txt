@@ -1,0 +1,1 @@
+Should you have a chance to participate in the design and implementation of a new Operating System, what course of action would you follow, what features would you advocate for, what algorithms would you include, etc.?

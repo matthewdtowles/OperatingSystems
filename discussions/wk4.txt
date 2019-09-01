@@ -1,0 +1,3 @@
+Consider the Banker's algorithm for deadlock avoidance (chapte 7.6 from the eReadings).
+Give an example of application of this algorithm for 7 processes(P1, .., P7) and 5 resource types (R1, .., R5).
+Your example must be original (different from your colleagues' examples).

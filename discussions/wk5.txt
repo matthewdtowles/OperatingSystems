@@ -1,0 +1,5 @@
+Imagine a new file system structure, describe it (and how it would work), give examples of its advantages and disadvantages.
+
+Briefly describe how you would implement it.
+
+Hint: consider various data structures that you are familiar with and start from there.

@@ -1,13 +1,15 @@
-Name a few operating systems that you worked on (or had contact with).
+I have had contact with the following operating systems:  Windows XP, Windows 7, Windows 8, Windows 10, Linux Ubuntu, Android, iOS, and I believe my first computer had Windows 3.11.
 
-Describe your experience and answer comparative questions like:
+The oldest OS I have had contact with was Windows 3.11. It is also the oddest since my experience with that one was so much different. I can recall at start up there were six different options like: 
+    1. Windows 
+    2. Lotus 123
+    3. Some educational math game
+    4. Some educational spelling game 
+    ...
+Of the above options, the user would simply press one of the number buttons on a keyboard and you were well on your way. This is so odd in retrospect since any application we use is simply chosen after the OS has started. The menu above allowed the user to (I assume) bypass Windows actually starting (or it seemed that way.)
 
-- Which one was the oldest / most recent?
+The most recent operating systems I have used are Windows 10 (work), Linux Ubuntu 16 (my machine), and Android 7 Nougat (my phone).
 
-- Which one was the oddest? why?
+My experience with each OS has been fun for different reasons. I like using Ubuntu since I think it is beneficial to gain comfort with unix-style commands due to their widespread use. I can also say that I think android is more fun than iOS since I can develop apps for my android phone which I don't think I could do with an iPhone. 
 
-- Which one was more fun? why?
-
-- Which particular OS feature do you like most? why?
-
-- Which particular OS feature do you dislike most? why?
+I like the flexibility and power that android and Ubuntu offer. I'm not ashamed to admit that I like the convenience Windows offers too, but there isn't anything that I like about Windows itself that I could speak about. The real benefit is that most desktop applications are (or had been) made available for Windows -- not really anything about the OS itself. 

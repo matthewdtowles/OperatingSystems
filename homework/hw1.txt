@@ -1,7 +1,17 @@
+Matthew Towles 8/23/2019
+
 Answer the following 3 questions:
 
 1) Compare and contrast System Software and Application Software.  Give an example of each.
 
+System Software manages the physical resources or hardware of a computer system. It is more general purpose than Application Software that is meant for a more specific purpose. Operating systems are an example of System Software. Without System Software like Operating Systems, Application Software would either not exist as it does or it would have to take on the responsibilities of the System Software. This means that the Application Software would have to be programmed for specific machines as opposed to being developed for specific platforms (Operating Systems.) Linux, Windows, OS X are all Operating Systems and are all examples of System Software. Examples of Application Software include text editors, web browsers, games, and most of the apps represented by icons on your smart phone screen.
+
 2) Abstraction is an important quality of an Operating System.  Explain how Operating Systems and abstraction are related.
 
+Operating Systems give an abstracted view/access of the hardware. Not all hardware is the same. Obviously, a PC is different from a phone, but even two PCs released in the same year may have different hardware. The Operating System via abstraction allows for the access to be the same across different hardware. So developers of application software and I/O devices do not need to be concerned with the exact details of the underlying hardware. 
+
+I am looking out at my parking lot and no car is the same. I know that I could drive any of them (assuming I have permission) and that each one will move forward via an accelerator and stop via a brake. I will be able to do this despite knowing the underlying details of how any of these things work. I will be able to do this without knowing the inner-workings and details of the car. Operating Systems lend a similar convenience to users to only have to know the abstraction and not the finer details. 
+
 3) Why do user applications not run at the kernel layer?
+
+User applications do not run at the kernel layer because they would have access to the hardware. Most of the benefits Operating Systems give us would be unused since the benefits have to do with not having or needing to have access to the hardware resources. Additionally, if the user application crashed at the kernel layer, it would affect the entire system - possibly causing it to crash. A loss of security and protection usually offered by the OS.

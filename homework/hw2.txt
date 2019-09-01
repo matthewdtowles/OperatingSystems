@@ -1,0 +1,21 @@
+Instructions
+This assignment demonstrates your understanding for how to create and use threads. 
+
+Before attempting this project, be sure you have completed all of the reading assignments, hands-on labs, discussions, and assignments to date.
+
+1) Write a Java or C# program with 3 separate classes.  I provided two samples that you can look at.... one is in Java and one C#.
+
+One class will be a thread class that runs an IO intensive operation. Name the class IOBound. You can write to the system out a number of times (ie 1000) or do something like read and write a file. 
+
+One class will be a thread class that runs a computationally intensive operation. Name the class CPUBound. You can perform some math computation a number of times.  Use the same number of loop iterations as you use in the IOBound class.
+Create a controller class that instantiates 5 objects of each class and runs each object.  All the thread objects should be running concurrently.  In other words, start all of the threads.  Do not run each thread one at a time to completion.
+
+2) Take the start and stop time for each thread and print out the time it takes to run.
+
+3) Take the start and stop time to schedule and run all the threads and print out the time to run.
+
+4) Run the program a couple of times.
+
+5) Attach your code as well as a document. The document should include snapshots (enough to demonstrate it ran) of the running code as well as results.  Place the numbers from your runs in a table.  Include a 1 paragraph lessons learned. The lessons learned should include what the numbers tell you. Document any problems.
+
+6) Code should follow standard practices with good commenting, variable and method names, and good formatting..... its a 400 level course.

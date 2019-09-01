@@ -1,0 +1,9 @@
+1. Design a memory management scheme for a 48 bit architecture, using various types of paging and/or segmentation described in this week's readings.
+
+Your post should include a clear translation scheme from a 48 bit logical address to a 48 bit physical address including a picture that shows this translation procedure.
+
+Then highlight its advantages and disadvantages.
+
+Your scheme must be different from your colleagues' schemes.
+
+2. Encrypt the phrase "My name is _full_name_" using Caesar's cipher described in Module 6 Commentary (use you actual full name instead of "_full_name_", and the English alphabet instead of the Latin alphabet). 

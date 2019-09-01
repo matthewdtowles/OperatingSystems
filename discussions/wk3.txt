@@ -1,0 +1,7 @@
+Pick one scheduling algorithm and give us your opinion about it; use different points of view (interactive/batch, slow/fast, easy/difficult to implement/understand, etc.)
+
+The post should reflect your own understanding, use your own words (don't repeat paragraphs from the online material or the eReadings).
+
+If you pick an algorithm that was already chosen (and posted) by another colleague, your post should be original (try covering different angles, give some examples, etc.). 
+
+OR : Suggest a new scheduling algorithm. Show its advantages and disadvantages.
