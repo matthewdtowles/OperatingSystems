@@ -7,3 +7,7 @@ Please avoid repetition of the same list of similarities and differences.
 I would suggest to pick one similarity / difference and elaborate a little bit on that subject, perhaps with concrete examples on how things are done on a certain OS or another.
 
 Examples always help understanding the topic.
+
+------
+
+A process is a program that is executing and a thread is a subset of a process. So a process may have one or many threads executing sequentially or concurrently. The difference that I would like to focus on is that processes do not share memory space, but threads may share memory space. That is, threads which are part of the same process share a memory space. So as an example, in our homework we had three classes: Controller, IOBound, and CPUBound. In the Controller class, I had some variables that all 10 threads would access at different times. All the threads were part of the same process and shared the same memory space. However, if I ran another instance of my program, the threads in the second instance or process would not have access to the variables in the first process and vice versa. 
