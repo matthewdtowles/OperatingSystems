@@ -8,26 +8,12 @@ package homework2;
  * All thread objects run concurrently
  *
  * Takes the start and stop time for
- * each thread and print out time
+ * each thread and prints out time
  * taken to run
  *
- * Take start and stop time to schedule
- * and run all threads and print out
+ * Takes start and stop time to schedule
+ * and run all threads and prints out
  * the time taken to run
- *
- * 
- * 
- * 
- * Run program a couple of times
- *
- * Attach code + document
- * Document includes:
- *      snapshots showing it ran
- *      + results
- *      Numbers from runs in a table
- *      1 Paragraph on lessons learned
- *      Document issues
- * 
  * 
  * @author matthew.towles
  * @date Aug 31, 2019
@@ -74,9 +60,11 @@ public class Controller {
         
         long start = System.currentTimeMillis();
         
+        // arrays of IOBound and CPUBound Threads
         IOBound[] ioThreads = new IOBound[NUM_THREADS];
         CPUBound[] cpuThreads = new CPUBound[NUM_THREADS];
 
+        // set Threads in arrays and start execution
         for (int i = 0; i < NUM_THREADS; i++) {
             ioThreads[i] = new IOBound();
             cpuThreads[i] = new CPUBound();
@@ -88,15 +76,20 @@ public class Controller {
             cpuThreads[i].start();
         }
         
-
+        // join each Thread in arrays to prevent main
+        // thread from executing too early
+        for (int i = 0; i < NUM_THREADS; i++) {
+            ioThreads[i].join();
+            cpuThreads[i].join();
+        }
         
-        // give child threads adequate time to complete
-        Thread.sleep(3500);
+//        Thread.sleep(3500);
 
         long end = System.currentTimeMillis();
         // overall runtime
         long runtime = end - start;
         
+        // display overall runtime results
         System.out.println("*  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *");
         System.out.println("Controller thread. My name is: " +
                 Thread.currentThread().getName());
@@ -104,6 +97,7 @@ public class Controller {
         System.out.println("Overall Runtime: " + String.valueOf(runtime));
         System.out.println("*  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *");
         
+        // display results for each child Thread
         for (int i = 0; i < NUM_THREADS; i++) {
             System.out.println(ioThreads[i].getName() + " runtime: " 
                     + String.valueOf(ioThreads[i].getRuntime()));
