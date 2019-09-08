@@ -1,5 +1,5 @@
-0. Thread 3 - iteration no. 1
-1. Thread 3 - iteration no. 2
-2. Thread 3 - iteration no. 3
-3. Thread 3 - iteration no. 4
-4. Thread 3 - iteration no. 5
+0. Thread 1 - iteration no. 1
+1. Thread 1 - iteration no. 2
+2. Thread 1 - iteration no. 3
+3. Thread 1 - iteration no. 4
+4. Thread 1 - iteration no. 5
