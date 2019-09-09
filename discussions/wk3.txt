@@ -4,4 +4,12 @@ The post should reflect your own understanding, use your own words (don't repeat
 
 If you pick an algorithm that was already chosen (and posted) by another colleague, your post should be original (try covering different angles, give some examples, etc.). 
 
-OR : Suggest a new scheduling algorithm. Show its advantages and disadvantages.
+---------
+
+The Shortest Remaining Time (SRT) scheduling algorithm deserves mentioning. According to the model tests in the assigned reading for this week, is out-performed all other tested scheduling algorithms. 
+
+I was actually surprised that it outperformed on both wait time and turnaround time when compared to Shortest Process Next (SPN.) Since, SRT is preemptive, one can expect more context switching which should lead to more overhead when compared to SPN, which is non-preemptive. I expected SRT to outperform SPN in average wait time since the shortest process would always get executed, even if another process was already executing. However, I did not expect a similar comparison in performace among the two with regard to average turnaround due to the extra context switching in SRT. 
+
+Of course, these results would likely vary depending on the system and the actual implementations of the algorithms. It's also important to keep in mind that many real implementations may not strictly adhere to one scheduling algorithm. 
+
+The simpler and naive Round Robin (RR) algorithm comes to mind to prevent starvation. In other words, an approach that combined SRT with some RR seems like it would harness the strengths of SRT while also mitigating the potential for starvation by also impementing some form of RR as well. The key here is how often should the new algorithm deviate from SRT to make the rounds to give some attention to the longer remaining time processes (processes with lower priorities.) My idea would be to increment (higher number = higher priority) priority for processes in queue at some interval. 
