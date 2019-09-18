@@ -3,7 +3,9 @@ package filemanager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -50,14 +52,27 @@ public class FileManager {
     static final String DIRECTORY_PROMPT = "Enter absolute path of directory: ";
     static final String FILE_PROMPT = "Enter file name in current directory: ";
     
+    /**
+     * Directory Separator for FileManager.path
+     * Set as \\ for Windows systems
+     */
     static final String DS = "\\";
     
+    /**
+     * Max no. of bytes for user password
+     */
+    static final int PW_BYTE_LIMIT = 256;
     
     
     /**
      * User provided directory
      */
     private static File directory;
+    
+    /**
+     * Path to the FileManager.directory
+     */
+    private static String path;
     
     
     /**
@@ -173,13 +188,14 @@ public class FileManager {
         if (!directory.exists()) {
             throw new FileNotFoundException(FILE_NOT_FOUND_MSG);
         }
+        path = directory.getAbsolutePath() + DS;
     }
     
     
     /**
      * List first level content of directory
      * Lists files and sub-directories separately
-     * Corresponds with optino 2 in processSelection()
+     * Corresponds with option 2 in processSelection()
      * @throws FileNotFoundException
      */
     private static void listDirectory()  {
@@ -190,7 +206,7 @@ public class FileManager {
         
         System.out.println();
         printDashes();
-        System.out.println(directory.getName() + ":");
+        System.out.println(directory.getName() + "/");
         
         for(File file : files) {
             if (file.isFile()) {
@@ -221,7 +237,7 @@ public class FileManager {
         
         File[] files = dirIn.listFiles();
         ArrayList<File> dirList = new ArrayList<>();
-        System.out.println(prepend + dirIn.getName() + ":");
+        System.out.println(prepend + dirIn.getName() + "/");
         
         for(File file : files) {
             if (file.isFile()) {
@@ -239,12 +255,16 @@ public class FileManager {
     
     
     /**
-     * 
+     * Deletes file specified by user
+     * Prompts user for file to be deleted
+     * inside of FileManager.directory
      * Corresponds with option 4 in processSelection()
-     * @param file 
      */
     private static void delete() throws FileNotFoundException {
         File file = promptUserFile();
+        if (file.delete()) {
+            System.out.println(file.getName() + " deleted.");
+        }
     }
     
     
@@ -252,24 +272,26 @@ public class FileManager {
      * Displays the offset and hex respresentation
      * of file in directory given by user 
      * Corresponds with option 5 in processSelection()
+     * @throws FileNotFoundException
+     * @throws IOException 
      */
     private static void displayFileHex() throws FileNotFoundException, IOException {
         File file = promptUserFile();
         FileInputStream filestream = new FileInputStream(file);
-        int lineNum;
+        int line;
         int lineItem = 0;
         System.out.println("Offset   | Hexadecimal Code");
         int offset = 0;
         System.out.printf("%08X | ", offset);
-        while ((lineNum = filestream.read()) != -1) {
-            System.out.printf("%02X ", lineNum);
+        while ((line = filestream.read()) != -1) {
+            System.out.printf("%02X ", line);
             lineItem++;
             if (lineItem >= 16) {
                 // go to next line
                 System.out.println();
                 lineItem = 0;
-                offset += 10;
-                System.out.printf("%08X | ", offset); // this is not correct but we are printing it out for now to look nice
+                offset += 16;
+                System.out.printf("%08X | ", offset);
             }
         }
     }
@@ -279,8 +301,19 @@ public class FileManager {
      * 
      * Corresponds with option 6 in processSelection()
      */
-    private static void encrypt() {
-        String password = promptUserPassword();
+    private static void encrypt() throws FileNotFoundException, IOException {
+        File originalFile = promptUserFile();
+        byte[] fileBytes = Files.readAllBytes(originalFile.toPath());
+        byte[] password = promptUserPassword();
+        File encryptedFile = promptUserFile();
+        for(int i = 0; i < fileBytes.length; i++) {
+            // repeat password bytes over file bytes
+            int j = i % password.length;
+            fileBytes[i] = (byte) (fileBytes[i] ^ password[j]);
+        }
+        try (FileOutputStream outstream = new FileOutputStream(encryptedFile)) {
+            outstream.write(fileBytes);
+        }
     }
     
     
@@ -288,8 +321,8 @@ public class FileManager {
      * 
      * Corresponds with option 7 in processSelection()
      */
-    private static void decrypt() {
-        String password = promptUserPassword();
+    private static void decrypt() throws FileNotFoundException, IOException {
+        encrypt();
     }
     
     
@@ -303,19 +336,48 @@ public class FileManager {
         System.out.println(FILE_PROMPT);
         Scanner scannerIn = new Scanner(System.in);
         String fileName = scannerIn.nextLine();
-        File file = new File(directory.getAbsolutePath() + DS + fileName);
+        File file = new File(path + fileName);
         if (!file.exists()) {
             throw new FileNotFoundException(FILE_NOT_FOUND_MSG);
         }
+        
+        
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////
+        // MAKE SURE THIS IS A FILE AND NOT A DIRECTORY?????
         return file;
     }
     
-    
-    private static String promptUserPassword() {
+
+    /**
+     * Prompts user for password
+     * Returns the password as a byte[]
+     * Used for encrypt/decrypt methods
+     * @return pwBytes - a byte[] of password
+     */
+    private static byte[] promptUserPassword() {
         System.out.println("Enter password for encryption: ");
         Scanner scannerIn = new Scanner(System.in);
-        String pw = scannerIn.nextLine();      
-        return pw;
+        String pw = scannerIn.nextLine();
+        byte[] pwBytes = pw.getBytes();
+        if (pwBytes.length > PW_BYTE_LIMIT) {
+            System.out.println("Password may not exceed " 
+                    + PW_BYTE_LIMIT + " bytes.");
+            return promptUserPassword();
+        }
+        return pwBytes;
     }
     
     
