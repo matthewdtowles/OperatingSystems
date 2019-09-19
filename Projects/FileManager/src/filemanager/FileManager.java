@@ -41,10 +41,13 @@ public class FileManager {
         DECRYPT_FILE
     };
     
-    static final String FILE_NOT_FOUND_MSG = "Directory does not exist. Please "
-            + "select a valid directory";
+    static final String DIR_NOT_FOUND_MSG = "Directory does not exist. Please "
+            + "select a valid directory.";
     
-    static final String FILE_NOT_GIVEN_MSG = "Please provide a valid directory "
+    static final String FILE_NOT_FOUND_MSG = "File does not exist. Please "
+            + "select a valid file.";
+    
+    static final String DIR_NOT_GIVEN_MSG = "Please provide a valid directory "
             + "by choosing option 1 first.";
     
     static final String INVALID_OPTION_MSG = "Invalid menu option. Select 0 - 7";
@@ -84,7 +87,7 @@ public class FileManager {
             int selection = getSelection();
             processSelection(selection);
         } catch (NullPointerException e) {
-            System.out.println(FILE_NOT_GIVEN_MSG);
+            System.out.println(DIR_NOT_GIVEN_MSG);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         } finally {
@@ -126,6 +129,11 @@ public class FileManager {
      * @throws IOException 
      */
     private static void processSelection(int selection) throws IOException  {
+        if (selection > 1) {
+            if (!directory.exists()) {
+                throw new FileNotFoundException(DIR_NOT_FOUND_MSG);
+            }
+        }
         switch (selection) {
             case 0:
                 System.out.println("\r\nGoodbye!");
@@ -138,35 +146,20 @@ public class FileManager {
                 listDirectory();
                 break;
             case 3:
-                // list all directories and files recursively
                 printDashes();
                 listDirectoryAll(directory, 0);
                 printDashes();
                 break;
             case 4:
-                // delete option: prompt user for filename to delete
-                // if file spec'd not there, error message displayed
                 delete();
                 break;
             case 5:
-                // prompt user for filename
-                // display file in hex -- display each byte of file in hex
                 displayFileHex();
                 break;
             case 6:
-                // encrypt XOR w pw
-                // prompt user for pw
-                // prompt user for filename
-                // encrypt content of file using pw
-                // xor the pw with file content byte after byte
-                // repeat pw as needed since it's shorter than file content
                 encrypt();
                 break;
             case 7:
-                // decrypt file 
-                // prompt for pw
-                // prompt for file
-                // decrypt content using that pw
                 decrypt();
                 break;
             default:
@@ -186,7 +179,7 @@ public class FileManager {
         String fileName = scannerIn.nextLine();
         directory = new File(fileName);
         if (!directory.exists()) {
-            throw new FileNotFoundException(FILE_NOT_FOUND_MSG);
+            throw new FileNotFoundException(DIR_NOT_FOUND_MSG);
         }
         path = directory.getAbsolutePath() + DS;
     }
@@ -196,9 +189,8 @@ public class FileManager {
      * List first level content of directory
      * Lists files and sub-directories separately
      * Corresponds with option 2 in processSelection()
-     * @throws FileNotFoundException
      */
-    private static void listDirectory()  {
+    private static void listDirectory() {
         String prepend = getPrepend(1);
         
         File[] files = directory.listFiles();
@@ -230,9 +222,9 @@ public class FileManager {
      * Corresponds with option 3 in processSelection()
      * @param dirIn - starting directory
      * @param level - determines how many tabs to prepend
-     * @throws IOException 
+     * @throws FileNotFoundException 
      */
-    private static void listDirectoryAll(File dirIn, int level) throws IOException {
+    private static void listDirectoryAll(File dirIn, int level) throws FileNotFoundException {
         String prepend = getPrepend(level);
         
         File[] files = dirIn.listFiles();
@@ -302,9 +294,11 @@ public class FileManager {
      * Corresponds with option 6 in processSelection()
      */
     private static void encrypt() throws FileNotFoundException, IOException {
+        System.out.println("Enter file to encrypt.");
         File originalFile = promptUserFile();
         byte[] fileBytes = Files.readAllBytes(originalFile.toPath());
         byte[] password = promptUserPassword();
+        System.out.println("Enter encrypted file destination.");
         File encryptedFile = promptUserFile();
         for(int i = 0; i < fileBytes.length; i++) {
             // repeat password bytes over file bytes
@@ -322,7 +316,20 @@ public class FileManager {
      * Corresponds with option 7 in processSelection()
      */
     private static void decrypt() throws FileNotFoundException, IOException {
-        encrypt();
+        System.out.println("Enter encrypted file name to decrypt.");
+        File originalFile = promptUserFile();
+        byte[] fileBytes = Files.readAllBytes(originalFile.toPath());
+        byte[] password = promptUserPassword();
+        System.out.println("Enter decrypted file destination.");
+        File encryptedFile = promptUserFile();
+        for(int i = 0; i < fileBytes.length; i++) {
+            // repeat password bytes over file bytes
+            int j = i % password.length;
+            fileBytes[i] = (byte) (fileBytes[i] ^ password[j]);
+        }
+        try (FileOutputStream outstream = new FileOutputStream(encryptedFile)) {
+            outstream.write(fileBytes);
+        }
     }
     
     
@@ -409,8 +416,6 @@ public class FileManager {
      * @param args 
      */
     public static void main(String[] args) {
-      
         promptUser();
-        
     }
 }
