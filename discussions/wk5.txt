@@ -1,5 +1,23 @@
-Imagine a new file system structure, describe it (and how it would work), give examples of its advantages and disadvantages.
+First, my file system would have a cache implemented with a stack of references to the most recently used N files. There will also be a place for users to save links to files similar to how most users use desktops on their machines. 
 
-Briefly describe how you would implement it.
+The actual file system itself would automatically store and present files based on file type. This is strongly inspired by SQL - a schema is like a single system; file types would be like the tables; files would be like the entries. 
 
-Hint: consider various data structures that you are familiar with and start from there.
+In my experience, most users are not well-organized and google/search becomes more relevant as time passes. Therefore, why not have a system that specializes in sorting your files for you and then finding them quickly based on some command that the user gives. 
+
+Advantages of the system would be ease of use and simplicity. This also leads to a main disadvantage which is that it differs from what most users are already used to. It would also lack flexibility and would hinder development for developers since file locations would predominantly be dictated by this odd system. Another disadvantage would be that a user needs to know or remember what to look up. Of course, if the user knew the file type, the user could look at all files of that file type (still inconvenient.) Based on meta data as well as the what the file name may contain, the user could look up based on that information against the table too. 
+
+
+An example to help illustrate my point:
+
+root/
+    ...
+    exe/
+        myExeFile1.exe, 200kb, other info and meta data
+        someOtherExe.exe, ...
+    sh/
+        job.sh, ...
+        someScript.sh, ... 
+    txt/
+        myTextFile.txt, ...
+    ...
+    

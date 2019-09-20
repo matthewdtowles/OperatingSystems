@@ -17,6 +17,7 @@ import java.util.Scanner;
  */
 public class FileManager {
     
+    // individual menu options 0 - 7 in order
     static final String EXIT = "Exit";
     static final String SELECT_DIR = "Select directory";
     static final String LIST_DIR_CONTENT = "List directory content (first level)"; 
@@ -41,6 +42,7 @@ public class FileManager {
         DECRYPT_FILE
     };
     
+    // prompts and messages:
     static final String DIR_NOT_FOUND_MSG = "Directory does not exist. Please "
             + "select a valid directory.";
     
@@ -51,7 +53,6 @@ public class FileManager {
             + "by choosing option 1 first.";
     
     static final String INVALID_OPTION_MSG = "Invalid menu option. Select 0 - 7";
-    
     static final String DIRECTORY_PROMPT = "Enter absolute path of directory: ";
     static final String FILE_PROMPT = "Enter file name in current directory: ";
     
@@ -79,7 +80,9 @@ public class FileManager {
     
     
     /**
-     * 
+     * When called - this runs the application
+     * Keeps running application until user 
+     * selects 0 aka "Exit"
      */
     public static void promptUser() {
         try {
@@ -290,7 +293,12 @@ public class FileManager {
     
     
     /**
-     * 
+     * Encrypts a file given by user
+     * User gives file A to be encrypted
+     * User gives password to encrypt
+     * User gives file B which will be the
+     * encrypted copy of file A
+     * Uses XOR encryption
      * Corresponds with option 6 in processSelection()
      */
     private static void encrypt() throws FileNotFoundException, IOException {
@@ -312,7 +320,12 @@ public class FileManager {
     
     
     /**
-     * 
+     * Decrypts a file given by user
+     * User gives file A to be decrypted
+     * User gives password to decrypt
+     * User gives file B which will be the
+     * decrypted copy of file A
+     * Uses XOR encryption
      * Corresponds with option 7 in processSelection()
      */
     private static void decrypt() throws FileNotFoundException, IOException {
@@ -347,23 +360,6 @@ public class FileManager {
         if (!file.exists()) {
             throw new FileNotFoundException(FILE_NOT_FOUND_MSG);
         }
-        
-        
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////
-        // MAKE SURE THIS IS A FILE AND NOT A DIRECTORY?????
         return file;
     }
     
