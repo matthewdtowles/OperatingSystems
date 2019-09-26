@@ -4,6 +4,14 @@ Your post should include a clear translation scheme from a 48 bit logical addres
 
 Then highlight its advantages and disadvantages.
 
-Your scheme must be different from your colleagues' schemes.
+--------------
 
+
+
+
+--------------
 2. Encrypt the phrase "My name is _full_name_" using Caesar's cipher described in Module 6 Commentary (use you actual full name instead of "_full_name_", and the English alphabet instead of the Latin alphabet). 
+
+My name is Matthew Towles
+shift = 8
+UG VIUM QA UIBBPME BWETMA

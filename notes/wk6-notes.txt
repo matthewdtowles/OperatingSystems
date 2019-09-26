@@ -108,7 +108,7 @@
 - physical memory is divided into frames
 - size of page = 2^n = size of frame
 - no external fragmentation
-    - potential for a small amount of internal fragmentation on last page of a process 
+    - potential for a small amount of internal fragmentation on last page of a process
 
 10.4.1.1 Logical Addresses
 - have a page number & an offset
@@ -132,7 +132,19 @@
     - solution: store it in virtual memory and only load the part of the table with the entry of the page currently being referenced
     - another solution: a page directory is always kept in memory
         - every entry in this page directory points to a page table
-
+* Process wants to access byte at logical address 2500
+    - ADDRESS / 1KB => 2500/1024 = 2 with remainder of 452
+    - 2 is the page number 
+    - 452 is the offset 
+    - page table will have index for process and its frame number 
+    - so if page 2 is at frame 5:
+        - we find where frame 5 starts (5120 in this case perhaps)
+        - so if frame 5 starts at 5120, add the offset: 5120 + 452 = 5572
+            - this is the address of the of the byte at logical address 2500
+    ** logical address = 010 011 100 010 0
+        - 3 most significant bits are page no. = 010
+        
+        
 10.5.7 Page Size Considerations
 - small page size => small amt of internal fragmentation
     - => large amt of pages => large page table => larger amt of disk accesses
