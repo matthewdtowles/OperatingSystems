@@ -6,8 +6,13 @@ Then highlight its advantages and disadvantages.
 
 --------------
 
+My memory management scheme for a 48 bit architecture uses hierarchical paging with 12 bits for outer page number, 12 bits for inner page number, and 24 bits for the offset.
 
+This scheme is able to do looks up faster than simple paging due to the hierarchy, but this also requires an extra access to memory for each translation since each time we must look up the outer page table and then the inner page table as well. 
 
+This should work better than simple paging as the architecture size grows since there could be more pages which would make it longer to look up which this scheme can help with since only a portion of pages are ever searched through for each translation.
+
+I was considering adding a transition look aside buffer to this scheme, but decided against it since it would only improve what this scheme is already good at while costing this scheme another memory access for each translation since it would check the cache each time and since it is a larger system (48 bit) it's even more likely for cache misses to occur.
 
 --------------
 2. Encrypt the phrase "My name is _full_name_" using Caesar's cipher described in Module 6 Commentary (use you actual full name instead of "_full_name_", and the English alphabet instead of the Latin alphabet). 
