@@ -1,6 +1,8 @@
 package demandpagingsimulator;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 /**
@@ -30,15 +32,38 @@ public class DemandPagingSimulator {
         "Simulate LFU"
     };
     
-    static final int PHYSICAL_FRAMES_LIMIT = 8;
-    static final int VIRTUAL_FRAMES_COUNT = 10;
     
-    static final String INVALID_OPTION_MSG = "Invalid menu option. Select 0 - 7";
+    static final int PHYSICAL_FRAMES_LIMIT = 8;
+    
+    /**
+     * The number of different values in
+     * a reference string may have
+     */
+    static final int VIRTUAL_FRAMES_COUNT = 10;
 
     /**
      * Will hold current reference string
      */
-    private static String referenceString;
+//    private static String referenceString;
+    
+    private static ArrayList<Integer> referenceString;
+    
+    /**
+     * Number of physical frames
+     * Given by user as cmd line arg
+     * Must be less than PHYSICAL_FRAMES_LIMIT
+     * This is how many different reference
+     * string values may be held at any time
+     */
+    private static int frameCount;
+    
+    private static LinkedList<Integer> frames;
+    
+    private static ArrayList<Boolean> faults;
+    
+    private static ArrayList<Integer> victims;    
+    
+    private static ArrayList<LinkedList<Integer>> snapShots;
     
     
     /**
@@ -87,52 +112,246 @@ public class DemandPagingSimulator {
      */
     private static void processSelection(int selection) throws IOException {
         
+        if (selection > 2 && referenceString.isEmpty()) {
+            throw new IOException("Reference string must be set first.");
+        }
+        
         switch (selection) {
             case 0:
                 System.out.println("\r\nGoodbye!");
                 System.exit(0);
                 break;
             case 1:
-                // read reference string from keyboard
-                // save reference string in a buffer
-                // verify/validate each value in reference string OR reject
+                getUserRefString();
                 break;
             case 2:
-                // randomly generate a reference string
-                // length of reference string given by user interactively
-                // save reference string in a buffer
+                getRandomRefString();
                 break;
             case 3:
-                // display current reference string
-                // if none - NO_REF_STRING_ERROR
+                displayReferenceString();
                 break;
             case 4:
-                // simulate FIFO
-                // if none - NO_REF_STRING_ERROR
-                // user presses a key after each step to continue simulation
-                // total faults displayed at end of simulation
+                simFIFO();
                 break;
             case 5:
-                // simulate OPT
-                // if none - NO_REF_STRING_ERROR
-                // user presses a key after each step to continue simulation
-                // total faults displayed at end of simulation
+                simOPT();
                 break;
             case 6:
-                // simulate LRU
-                // if none - NO_REF_STRING_ERROR
-                // user presses a key after each step to continue simulation
-                // total faults displayed at end of simulation
+                simLRU();
                 break;
             case 7:
-                // simulate LFU
-                // if none - NO_REF_STRING_ERROR
-                // user presses a key after each step to continue simulation
-                // total faults displayed at end of simulation
+                simLFU();
                 break;
             default:
-                throw new IOException(INVALID_OPTION_MSG);
+                throw new IOException("Invalid menu option. Select 0 - 7");
         }
+    }
+    
+    
+    /**
+     * Sets the frameCount from cmd line arg
+     * If no valid argument given, sets a 
+     * default value for the frameCount
+     * @param count 
+     */
+    private static void setFrameCount(int count) {
+        if (!validFrameCount(count)) {
+            count = (PHYSICAL_FRAMES_LIMIT - 1);
+        }
+        frameCount = count;
+    }
+    
+    
+    /**
+     * Returns whether given count is a
+     * valid frameCount
+     * @param count
+     * @return boolean
+     */
+    private static boolean validFrameCount(int count) {
+        return (count < PHYSICAL_FRAMES_LIMIT && count > 0);
+    }
+    
+    
+    /**
+     * Saves reference string given by user
+     * Validates user's input
+     * Will re-prompt for new string if input
+     * is not valid -- int or whitespace
+     * Menu Option 1
+     */
+    private static void getUserRefString() {
+        referenceString.clear();
+        System.out.println("Enter reference string: ");
+        Scanner scanner = new Scanner(System.in);
+        String refString = scanner.nextLine();
+
+        // check for invalid chars: non-digits and non-ws
+        for (char c : refString.toCharArray()) {
+            if (!Character.isDigit(c) && !Character.isWhitespace(c)) {
+                System.out.println("Reference string may only have numbers and "
+                        + "white space.");
+                System.out.println();
+                getUserRefString();
+                return;
+            }
+            
+            // add only ints to referenceString
+            if (Character.isDigit(c)) {
+                referenceString.add((int)c);
+            }
+        }
+    }
+    
+    
+    /**
+     * Saves a randomly gen'd reference string
+     * Length of reference string given by user
+     * Menu Option 2
+     */
+    private static void getRandomRefString() {
+        referenceString.clear();
+        System.out.println("Enter length of reference string: ");
+        Scanner scanner = new Scanner(System.in);
+        int strLength = scanner.nextInt();
+        for (int i = 0; i < strLength; i++) {
+            int next = (int)Math.floor(Math.random()*10);
+            referenceString.add(next);
+        }
+    }
+    
+    
+    /**
+     * Prints out the current referenceString
+     * Also used for first row of output table
+     * Menu Option 3
+     */
+    private static void displayReferenceString() {
+        displayLine();
+        System.out.print("Reference string |");
+        for(int val : referenceString) {
+            System.out.print(" " + val + " |");
+        }
+        System.out.println();
+    }
+    
+
+    /**
+     * Simulates FIFO paging alg on referenceString
+     * User presses a key after each step to continue
+     * Total number of faults displayed at end
+     * Menu Option 4
+     */
+    private static void simFIFO() {
+        reset();
+        for(int val : referenceString) {
+            if (!frames.contains(val)) {
+                faults.add(Boolean.TRUE);
+                frames.addFirst(val);
+                if (frames.size() >= frameCount) {
+                    int victim = frames.removeLast();
+                    victims.add(victim);
+                } else {
+                    victims.add(null);
+                }
+            } else {
+                faults.add(Boolean.FALSE);
+                victims.add(null);
+            }
+            snapShots.add(frames);
+        }
+    }
+    
+    
+    /**
+     * Simulates OPT paging alg on referenceString
+     * User presses a key after each step to continue
+     * Total number of faults displayed at end
+     * Menu Option 5
+     */
+    private static void simOPT() {
+        reset();
+    }
+    
+    
+    /**
+     * Simulates LRU paging alg on referenceString
+     * User presses a key after each step to continue
+     * Total number of faults displayed at end
+     * Menu Option 6
+     */
+    private static void simLRU() {
+        reset();
+    }
+    
+    
+    /**
+     * Simulates LFU paging alg on referenceString
+     * User presses a key after each step to continue
+     * Total number of faults displayed at end
+     * Menu Option 7
+     */
+    private static void simLFU() {
+        reset();
+    }
+    
+    
+    /**
+     * Prints out a physical frame row for the
+     * output table
+     */
+    private static void displayFrames() {
+        for(int i = 0; i < snapShots.size(); i++) {
+            System.out.print("Physical frame " + String.valueOf(i) + " |");
+            for (int val : snapShots.get(i)) {
+                System.out.print(" " + String.valueOf(val) + " |");
+            }
+        }
+        System.out.println();
+    }
+    
+    private static void displayFaults() {}
+    private static void displayVictims() {}
+    
+    
+    /**
+     * Resets variables for simulation algs
+     */
+    private static void reset() {
+        faults.clear();
+        snapShots.clear();
+        frames.clear();
+        victims.clear();
+    }
+    
+    
+    /**
+     * Initializes all simulation alg vars
+     */
+    private static void initVars() {
+                
+        // initialize referenceString
+        referenceString = new ArrayList<>();
+        
+        // initialize frames
+        frames = new LinkedList<>();
+        
+        // initialize faults
+        faults = new ArrayList<>();
+        
+        // initialize victims
+        victims = new ArrayList<>();
+                
+        // initialize snapShots
+        snapShots = new ArrayList<>();
+    }
+        
+    
+    /**
+     * Displays a standardized line separator
+     */
+    private static void displayLine() {
+        System.out.println("- - - - - - - - - - - - - - - - - - - -");
     }
     
     
@@ -141,6 +360,23 @@ public class DemandPagingSimulator {
      * @param args 
      */
     public static void main(String[] args) {
+        // set up frame count
+        if (args.length > 0) {
+            setFrameCount(Integer.parseUnsignedInt(args[0]));
+        } else {
+            setFrameCount(PHYSICAL_FRAMES_LIMIT - 1);
+        }
+        
+        // display frame count for user
+        displayLine();
+        System.out.println("FRAME COUNT = " + String.valueOf(frameCount));
+        displayLine();
+        System.out.println();
+        
+        // initialize variables:
+        initVars();
+        
+        // menu prompt and beginning the program:
         promptUser();
     }
 }
