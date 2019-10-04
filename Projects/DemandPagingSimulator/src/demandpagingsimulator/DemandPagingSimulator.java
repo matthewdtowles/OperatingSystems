@@ -198,7 +198,7 @@ public class DemandPagingSimulator {
             
             // add only ints to referenceString
             if (Character.isDigit(c)) {
-                referenceString.add((int)c);
+                referenceString.add(Character.getNumericValue(c));
             }
         }
     }
@@ -242,7 +242,7 @@ public class DemandPagingSimulator {
      * Total number of faults displayed at end
      * Menu Option 4
      */
-    private static void simFIFO() {
+    private static void simFIFO() throws IOException {
         reset();
         for(int val : referenceString) {
             if (!frames.contains(val)) {
@@ -259,6 +259,10 @@ public class DemandPagingSimulator {
                 victims.add(null);
             }
             snapShots.add(frames);
+
+            displayTable();
+            
+            continuePrompt();
         }
     }
     
@@ -297,6 +301,20 @@ public class DemandPagingSimulator {
     
     
     /**
+     * Print out a table with reference string,
+     * physical frames, page faults, victim frames
+     */
+    private static void displayTable() {
+        displayReferenceString();
+        displayFrames();
+        displayFaults();
+        displayVictims();
+        displayLine();
+        System.out.println();
+    }
+    
+    
+    /**
      * Prints out a physical frame row for the
      * output table
      */
@@ -306,6 +324,7 @@ public class DemandPagingSimulator {
             for (int val : snapShots.get(i)) {
                 System.out.print(" " + String.valueOf(val) + " |");
             }
+            System.out.println();
         }
         System.out.println();
     }
@@ -329,20 +348,10 @@ public class DemandPagingSimulator {
      * Initializes all simulation alg vars
      */
     private static void initVars() {
-                
-        // initialize referenceString
         referenceString = new ArrayList<>();
-        
-        // initialize frames
         frames = new LinkedList<>();
-        
-        // initialize faults
         faults = new ArrayList<>();
-        
-        // initialize victims
         victims = new ArrayList<>();
-                
-        // initialize snapShots
         snapShots = new ArrayList<>();
     }
         
@@ -354,6 +363,15 @@ public class DemandPagingSimulator {
         System.out.println("- - - - - - - - - - - - - - - - - - - -");
     }
     
+    
+    /**
+     * Prompts user to continue
+     * @throws IOException 
+     */
+    private static void continuePrompt() throws IOException {
+        System.out.println("Press ENTER to continue.");
+        System.in.read();
+    }
     
     /**
      * Main
