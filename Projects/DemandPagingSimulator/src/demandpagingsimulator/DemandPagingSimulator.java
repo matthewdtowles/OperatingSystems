@@ -2,6 +2,7 @@ package demandpagingsimulator;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -338,10 +339,11 @@ public class DemandPagingSimulator {
         LinkedList<Integer> framesCopy = new LinkedList<>(frames);
         // loop through referenceString starting at 
         for (int i = (index + 1); i < referenceString.size(); i++) {
-            if (framesCopy.contains(referenceString.get(i))) {
-                if (framesCopy.size() == 1) {
+            System.out.println("framesCopy = " + Arrays.toString(framesCopy.toArray()));
+            if (framesCopy.size() == 1) {
                     return framesCopy.peek();
-                }
+            }
+            if (framesCopy.contains(referenceString.get(i))) {
                 framesCopy.remove(referenceString.get(i));
             }
         }
@@ -480,14 +482,6 @@ public class DemandPagingSimulator {
         snapShots = new ArrayList<>(size);
     }
         
-    /*
-    private static void initFrames() {
-        frames = new LinkedList<>();
-        for (int i = 0; i < frameCount; i++) {
-            frames.add(null);
-        }
-    }
-    */
     
     /**
      * Displays a standardized line separator
