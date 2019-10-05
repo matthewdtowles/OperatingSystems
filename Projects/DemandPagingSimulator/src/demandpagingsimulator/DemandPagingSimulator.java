@@ -91,7 +91,7 @@ public class DemandPagingSimulator {
         for (int i = 0; i < MENU.length; i++) {
             System.out.println(String.valueOf(i) + " - " + MENU[i]);
         }
-        System.out.println("Select option: ");
+        System.out.print("Select option: ");
     }
     
     
@@ -123,9 +123,11 @@ public class DemandPagingSimulator {
                 break;
             case 1:
                 getUserRefString();
+                initVars();
                 break;
             case 2:
                 getRandomRefString();
+                initVars();
                 break;
             case 3:
                 displayReferenceString();
@@ -228,7 +230,7 @@ public class DemandPagingSimulator {
      */
     private static void displayReferenceString() {
         displayLine();
-        System.out.print("Reference string |");
+        System.out.print("Reference string ||");
         for(int val : referenceString) {
             System.out.print(" " + val + " |");
         }
@@ -244,24 +246,36 @@ public class DemandPagingSimulator {
      */
     private static void simFIFO() throws IOException {
         reset();
+        // loop through each val in reference string
         for(int val : referenceString) {
+            // check if val in memory/frames 
+            // if not - page fault
             if (!frames.contains(val)) {
                 faults.add(Boolean.TRUE);
                 frames.addFirst(val);
-                if (frames.size() >= frameCount) {
+                // remove last frame (first frame in)
+                if (frames.size() > frameCount) {
                     int victim = frames.removeLast();
                     victims.add(victim);
                 } else {
                     victims.add(null);
                 }
             } else {
+                // no page fault - add false as placeholder
                 faults.add(Boolean.FALSE);
+                // no victim - null as placeholder
                 victims.add(null);
             }
-            snapShots.add(frames);
+            // add current state of frames as a snapshot
+            // so that we can traverse snapShots to 
+            // display in output table
+            LinkedList<Integer> framesCopy = new LinkedList<>(frames);
+            snapShots.add(framesCopy);
 
+            // update user with progress in table
             displayTable();
             
+            // prompt user to continue after showing table
             continuePrompt();
         }
     }
@@ -273,8 +287,81 @@ public class DemandPagingSimulator {
      * Total number of faults displayed at end
      * Menu Option 5
      */
-    private static void simOPT() {
+    private static void simOPT() throws IOException {
         reset();
+        for (int i = 0; i < referenceString.size(); i++) {
+            int val = referenceString.get(i);
+            if (!frames.contains(val)) {
+                faults.add(Boolean.TRUE);                
+                if (frames.size() >= frameCount) {
+                    // find victim:
+                    
+                    int victim = findVictimOPT(i);
+                    victims.add(victim);
+                    int index = findIndex(victim);
+                    
+                    
+                    
+                    // debugging::::::::::::::::::::::::::::
+                    System.out.println("VICTIM:  " + victim);
+                    System.out.println("INDEX ===== " + index);
+                    System.out.println("VAL ----- " + val);
+                    // debugging::::::::::::::::::::::::::::
+                    
+                    
+                    
+                    frames.set(index, val);
+                
+                } else {
+                    frames.add(val);
+                    victims.add(null);
+                }
+            } else {
+                faults.add(Boolean.FALSE);
+                victims.add(null);
+            }
+            LinkedList<Integer> framesCopy = new LinkedList<>(frames);
+            snapShots.add(framesCopy);
+            displayTable();
+            continuePrompt();
+        }
+    }
+    
+    
+    /**
+     * Returns the value of next victim for OPT alg
+     * @param index
+     * @return val of victim for OPT alg
+     */
+    private static int findVictimOPT(int index) {
+        System.out.println("INDEX GIVEN IS : " + index);
+        LinkedList<Integer> framesCopy = new LinkedList<>(frames);
+        // loop through referenceString starting at 
+        for (int i = (index + 1); i < referenceString.size(); i++) {
+            if (framesCopy.contains(referenceString.get(i))) {
+                if (framesCopy.size() == 1) {
+                    return framesCopy.peek();
+                }
+                framesCopy.remove(referenceString.get(i));
+            }
+        }
+        return -1;
+    }
+    
+    
+    /**
+     * Returns index of the victim in frames
+     * @param victim
+     * @return index of victim in frames
+     */
+    private static int findIndex(int victim) {
+        System.out.println("VICTIM GIVEN IS : " + victim);
+        for (int i = 0; i < frames.size(); i++) {
+            if (victim == frames.get(i)) {
+                return i;
+            }
+        }
+        return -1;
     }
     
     
@@ -315,22 +402,60 @@ public class DemandPagingSimulator {
     
     
     /**
-     * Prints out a physical frame row for the
-     * output table
+     * Prints out physical frame rows
+     *  for the output table
      */
     private static void displayFrames() {
-        for(int i = 0; i < snapShots.size(); i++) {
-            System.out.print("Physical frame " + String.valueOf(i) + " |");
-            for (int val : snapShots.get(i)) {
-                System.out.print(" " + String.valueOf(val) + " |");
+        for(int i = 0; i < frameCount; i++) {
+            System.out.print("Physical frame " + String.valueOf(i) + " ||");
+            for (int j = 0; j < snapShots.size(); j++) {
+                if (i > (snapShots.get(j).size() - 1)) {
+                    System.out.print("   |");
+                } else {
+                    System.out.print(" " + snapShots.get(j).get(i) + " |");
+                }
             }
             System.out.println();
+        }
+    }
+    
+    
+    /**
+     * Prints out an 'F' for each column
+     * in the output table where there
+     * was a page fault
+     */
+    private static void displayFaults() {
+        System.out.print("Page faults      ||");
+        for (boolean b : faults) {
+            if (b) {
+                System.out.print(" F |");
+            } else {
+                System.out.print("   |");
+            }
         }
         System.out.println();
     }
     
-    private static void displayFaults() {}
-    private static void displayVictims() {}
+    
+    /**
+     * Prints out the victim frame
+     * for each column in the output
+     * table if there was a victim
+     */
+    private static void displayVictims() {
+        System.out.print("Victim frames    ||");
+        for (int i = 0; i < victims.size(); i++) {
+            String out;
+            if (victims.get(i) == null) {
+                out = "   |";
+            } else {
+                out = " " + String.valueOf(victims.get(i)) + " |";
+            }
+            System.out.print(out);
+        }
+        System.out.println();
+    }
     
     
     /**
@@ -341,6 +466,7 @@ public class DemandPagingSimulator {
         snapShots.clear();
         frames.clear();
         victims.clear();
+        initVars();
     }
     
     
@@ -348,13 +474,20 @@ public class DemandPagingSimulator {
      * Initializes all simulation alg vars
      */
     private static void initVars() {
-        referenceString = new ArrayList<>();
-        frames = new LinkedList<>();
-        faults = new ArrayList<>();
-        victims = new ArrayList<>();
-        snapShots = new ArrayList<>();
+        int size = referenceString.size();
+        faults = new ArrayList<>(size);
+        victims = new ArrayList<>(size);
+        snapShots = new ArrayList<>(size);
     }
         
+    /*
+    private static void initFrames() {
+        frames = new LinkedList<>();
+        for (int i = 0; i < frameCount; i++) {
+            frames.add(null);
+        }
+    }
+    */
     
     /**
      * Displays a standardized line separator
@@ -378,6 +511,9 @@ public class DemandPagingSimulator {
      * @param args 
      */
     public static void main(String[] args) {
+
+//        System.exit(0);
+
         // set up frame count
         if (args.length > 0) {
             setFrameCount(Integer.parseUnsignedInt(args[0]));
@@ -392,7 +528,8 @@ public class DemandPagingSimulator {
         System.out.println();
         
         // initialize variables:
-        initVars();
+        referenceString = new ArrayList<>();
+        frames = new LinkedList<>();
         
         // menu prompt and beginning the program:
         promptUser();

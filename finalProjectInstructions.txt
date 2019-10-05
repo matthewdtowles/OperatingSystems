@@ -2,49 +2,10 @@ N physical frames (numbered from 0 to N-1, N<8)
     - number provided in the command line
 virtual memory of ten frames (numbered from 0 to 9)
 
-MENU:
-0 – Exit
-Will exit the program
 
-1 – Read reference string
-A reference string will be read from the keyboard and stored in a buffer. 
-Each value of the reference string will be verified and validated (or rejected).
-Using option 1 again will result in overwriting the old reference string.
 
-2 – Generate reference string
-A reference string will be randomly generated; 
-the length of the reference string will be given by the user interactively. 
-The string will be stored in a buffer.
-Using option 2 more than once will result in overwriting the old reference string.
-
-3 – Display current reference string
-Will display the stored reference string; 
-if there is no reference string stored yet:
-    an error message will be displayed.
-
-4 – Simulate FIFO
-Will simulate the step by step execution of the FIFO algorithm using the stored reference string; 
-    if there is no reference string stored yet:  an error message must be displayed.
-The user will press a key after each step of the simulation to continue the simulation.
-The total number of faults will be displayed at the end of the simulation.
-
-5 – Simulate OPT
-Will simulate the step by step execution of the OPT algorithm using the stored reference string; 
-    if there is no reference string stored yet, an error message must be displayed.
-The user will press a key after each step of the simulation to continue the simulation.
-The total number of faults will be displayed at the end of the simulation.
-
-6 – Simulate LRU
-Will simulate the step by step execution of the LRU algorithm using the stored reference string; 
-    if there is no reference string stored yet, an error message must be displayed.
-The user will press a key after each step of the simulation to continue the simulation.
-The total number of faults will be displayed at the end of the simulation.
-
-7 – Simulate LFU
-Will simulate the step by step execution of the LFU algorithm using the stored reference string; 
-    if there is no reference string stored yet, an error message must be displayed.
-The user will press a key after each step of the simulation to continue the simulation.
-The total number of faults will be displayed at the end of the simulation.
+test n=4
+3 0 6 2 0 3 7 3 2 0 7 4 2 3 7 2 3
 
 -------------------------------------------------------------------------------------------------
 Deliverables:
