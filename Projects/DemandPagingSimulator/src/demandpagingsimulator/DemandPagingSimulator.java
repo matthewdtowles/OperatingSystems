@@ -2,7 +2,6 @@ package demandpagingsimulator;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -22,6 +21,10 @@ import java.util.Scanner;
  */
 public class DemandPagingSimulator {
 
+    /**
+     * Menu options given to user
+     * at prompt of program
+     */
     static final String[] MENU = {
         "Exit",
         "Read reference string",
@@ -33,7 +36,11 @@ public class DemandPagingSimulator {
         "Simulate LFU"
     };
     
-    
+    /**
+     * Maximum amount allowed of frames
+     * Frames value given by user may
+     * not exceed this limit
+     */
     static final int PHYSICAL_FRAMES_LIMIT = 8;
     
     /**
@@ -44,9 +51,7 @@ public class DemandPagingSimulator {
 
     /**
      * Will hold current reference string
-     */
-//    private static String referenceString;
-    
+     */   
     private static ArrayList<Integer> referenceString;
     
     /**
@@ -58,12 +63,28 @@ public class DemandPagingSimulator {
      */
     private static int frameCount;
     
+    /**
+     * Physical frames with current values
+     * held from referenceString
+     */
     private static LinkedList<Integer> frames;
     
+    /**
+     * Keeps track of faults for each evaluation
+     * of referenceString values
+     */
     private static ArrayList<Boolean> faults;
     
+    /**
+     * Keeps track of victims for each evaluation
+     * of referenceString values
+     */
     private static ArrayList<Integer> victims;    
     
+    /**
+     * List of states of frames for each
+     * evaluation of referenceString values
+     */
     private static ArrayList<LinkedList<Integer>> snapShots;
     
     
@@ -295,24 +316,10 @@ public class DemandPagingSimulator {
             if (!frames.contains(val)) {
                 faults.add(Boolean.TRUE);                
                 if (frames.size() >= frameCount) {
-                    // find victim:
-                    
                     int victim = findVictimOPT(i);
                     victims.add(victim);
-                    int index = findIndex(victim);
-                    
-                    
-                    
-                    // debugging::::::::::::::::::::::::::::
-                    System.out.println("VICTIM:  " + victim);
-                    System.out.println("INDEX ===== " + index);
-                    System.out.println("VAL ----- " + val);
-                    // debugging::::::::::::::::::::::::::::
-                    
-                    
-                    
+                    int index = findIndex(victim);   
                     frames.set(index, val);
-                
                 } else {
                     frames.add(val);
                     victims.add(null);
@@ -335,32 +342,14 @@ public class DemandPagingSimulator {
      * @return val of victim for OPT alg
      */
     private static int findVictimOPT(int index) {
-        System.out.println("INDEX GIVEN IS : " + index);
         LinkedList<Integer> framesCopy = new LinkedList<>(frames);
         // loop through referenceString starting at 
         for (int i = (index + 1); i < referenceString.size(); i++) {
-            System.out.println("framesCopy = " + Arrays.toString(framesCopy.toArray()));
             if (framesCopy.size() == 1) {
-                    return framesCopy.peek();
+                return framesCopy.peek();
             }
             if (framesCopy.contains(referenceString.get(i))) {
                 framesCopy.remove(referenceString.get(i));
-            }
-        }
-        return -1;
-    }
-    
-    
-    /**
-     * Returns index of the victim in frames
-     * @param victim
-     * @return index of victim in frames
-     */
-    private static int findIndex(int victim) {
-        System.out.println("VICTIM GIVEN IS : " + victim);
-        for (int i = 0; i < frames.size(); i++) {
-            if (victim == frames.get(i)) {
-                return i;
             }
         }
         return -1;
@@ -373,10 +362,51 @@ public class DemandPagingSimulator {
      * Total number of faults displayed at end
      * Menu Option 6
      */
-    private static void simLRU() {
+    private static void simLRU() throws IOException {
         reset();
+        for (int i = 0; i < referenceString.size(); i++) {
+            int val = referenceString.get(i);
+            if (!frames.contains(val)) {
+                faults.add(Boolean.TRUE);                
+                if (frames.size() >= frameCount) {
+                    int victim = findVictimLRU(i);
+                    victims.add(victim);
+                    int index = findIndex(victim);   
+                    frames.set(index, val);
+                } else {
+                    frames.add(val);
+                    victims.add(null);
+                }
+            } else {
+                faults.add(Boolean.FALSE);
+                victims.add(null);
+            }
+            LinkedList<Integer> framesCopy = new LinkedList<>(frames);
+            snapShots.add(framesCopy);
+            displayTable();
+            continuePrompt();
+        }
     }
     
+    
+    /**
+     * Returns the value of next victim for LRU alg
+     * @param index
+     * @return val of victim for LRU alg
+     */
+    private static int findVictimLRU(int index) {
+        LinkedList<Integer> framesCopy = new LinkedList<>(frames);
+        for (int i = (index - 1); i > 0; i--) {
+            if (framesCopy.size() == 1) {
+                return framesCopy.peek();
+            }
+            if (framesCopy.contains(referenceString.get(i))) {
+                framesCopy.remove(referenceString.get(i));
+            }
+        }
+        return -1;
+    }
+        
     
     /**
      * Simulates LFU paging alg on referenceString
@@ -384,8 +414,85 @@ public class DemandPagingSimulator {
      * Total number of faults displayed at end
      * Menu Option 7
      */
-    private static void simLFU() {
+    private static void simLFU() throws IOException {
         reset();
+        for (int i = 0; i < referenceString.size(); i++) {
+            int val = referenceString.get(i);
+            if (!frames.contains(val)) {
+                faults.add(Boolean.TRUE);                
+                if (frames.size() >= frameCount) {
+                    int victim = findVictimLFU(i);
+                    victims.add(victim);
+                    int index = findIndex(victim);   
+                    frames.set(index, val);
+                } else {
+                    frames.add(val);
+                    victims.add(null);
+                }
+            } else {
+                faults.add(Boolean.FALSE);
+                victims.add(null);
+            }
+            LinkedList<Integer> framesCopy = new LinkedList<>(frames);
+            snapShots.add(framesCopy);
+            displayTable();
+            continuePrompt();
+        }
+    }
+    
+    
+    /**
+     * Returns the value of next victim for LFU alg
+     * @param index
+     * @return val of victim for LFU alg
+     */
+    private static int findVictimLFU(int index) {
+        // keep track of how many times each value
+        // in reference string has occurred so far
+        int[] frameFrequencies = new int[VIRTUAL_FRAMES_COUNT];
+        for (int i = 0; i < index; i++) {
+            // i = index for referenceString
+            // val at i in referenceString is index
+            //  for frameFrequencies
+            frameFrequencies[referenceString.get(i)]++;
+        }
+        
+        // find least frequencly used val
+        // by finding array key that is 
+        // both > 0 and less than/equal to
+        // all other array entries which are
+        // also > 0 and the index must be a 
+        // value which is currently in frames
+        int lfu = -1;
+        for (int i = 0; i < frameFrequencies.length; i++) {
+            if (frameFrequencies[i] > 0 && frames.contains(i)) {
+                for (int j = 0; j < frameFrequencies.length; j++) {
+                    if (frameFrequencies[j] > 0 && frames.contains(j)) {
+                        if (frameFrequencies[j] < frameFrequencies[i]) {
+                            lfu = j;
+                        } else {
+                            lfu = i;
+                        }
+                    }
+                }
+            }
+        }
+        return lfu;
+    }
+    
+    
+    /**
+     * Returns index of the victim in frames
+     * @param victim
+     * @return index of victim in frames
+     */
+    private static int findIndex(int victim) {
+        for (int i = 0; i < frames.size(); i++) {
+            if (victim == frames.get(i)) {
+                return i;
+            }
+        }
+        return -1;
     }
     
     
@@ -500,13 +607,12 @@ public class DemandPagingSimulator {
         System.in.read();
     }
     
+    
     /**
      * Main
      * @param args 
      */
     public static void main(String[] args) {
-
-//        System.exit(0);
 
         // set up frame count
         if (args.length > 0) {
