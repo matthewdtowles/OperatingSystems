@@ -300,6 +300,7 @@ public class DemandPagingSimulator {
             // prompt user to continue after showing table
             continuePrompt();
         }
+        displayTotalFaults();
     }
     
     
@@ -333,6 +334,7 @@ public class DemandPagingSimulator {
             displayTable();
             continuePrompt();
         }
+        displayTotalFaults();
     }
     
     
@@ -350,9 +352,14 @@ public class DemandPagingSimulator {
             }
             if (framesCopy.contains(referenceString.get(i))) {
                 framesCopy.remove(referenceString.get(i));
+                if (framesCopy.size() == 1) {
+                    return framesCopy.peek();
+                }
             }
         }
-        return -1;
+        // none returned - current frames do not repeat
+        // so just pick the top one
+        return framesCopy.peek();
     }
     
     
@@ -386,6 +393,7 @@ public class DemandPagingSimulator {
             displayTable();
             continuePrompt();
         }
+        displayTotalFaults();
     }
     
     
@@ -402,6 +410,9 @@ public class DemandPagingSimulator {
             }
             if (framesCopy.contains(referenceString.get(i))) {
                 framesCopy.remove(referenceString.get(i));
+                if (framesCopy.size() == 1) {
+                    return framesCopy.peek();
+                }
             }
         }
         return -1;
@@ -438,6 +449,7 @@ public class DemandPagingSimulator {
             displayTable();
             continuePrompt();
         }
+        displayTotalFaults();
     }
     
     
@@ -456,22 +468,31 @@ public class DemandPagingSimulator {
             //  for frameFrequencies
             frameFrequencies[referenceString.get(i)]++;
         }
-        
-        // find least frequencly used val
-        // by finding array key that is 
-        // both > 0 and less than/equal to
-        // all other array entries which are
-        // also > 0 and the index must be a 
-        // value which is currently in frames
-        int lfu = -1;
+
+        // find least frequently used val by finding 
+        // array key that is  a value in frames and
+        // less than all other array entries in frames
+        int lfu = frames.get(0);
         for (int i = 0; i < frameFrequencies.length; i++) {
-            if (frameFrequencies[i] > 0 && frames.contains(i)) {
+            // only check against values currently in frames
+            if (frames.contains(i)) {
                 for (int j = 0; j < frameFrequencies.length; j++) {
-                    if (frameFrequencies[j] > 0 && frames.contains(j)) {
-                        if (frameFrequencies[j] < frameFrequencies[i]) {
-                            lfu = j;
-                        } else {
-                            lfu = i;
+                    // only check values in frames
+                    if (frames.contains(j)) {
+                        // dont compare to self:
+                        if (j != i) {
+                            // find which of two comparing occurs less
+                            if (frameFrequencies[j] < frameFrequencies[i]) {
+                                // make sure it is less than previous lfu
+                                if (frameFrequencies[j] < frameFrequencies[lfu]) {
+                                    lfu = j;
+                                }
+                            } else {
+                                // make sure it is less than previous lfu
+                                if (frameFrequencies[i] < frameFrequencies[lfu]) {
+                                    lfu = i;
+                                }
+                            }
                         }
                     }
                 }
@@ -544,6 +565,22 @@ public class DemandPagingSimulator {
             }
         }
         System.out.println();
+    }
+    
+    
+    /**
+     * Displays the total amount of page faults
+     */
+    private static void displayTotalFaults() {
+        int total = 0;
+        for (boolean b : faults) {
+            if (b) {
+                total++;
+            }
+        }
+        System.out.println("Total page faults: " + String.valueOf(total));
+        displayLine();
+        displayLine();
     }
     
     
