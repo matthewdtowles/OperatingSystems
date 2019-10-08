@@ -415,7 +415,7 @@ public class DemandPagingSimulator {
                 }
             }
         }
-        return -1;
+        return framesCopy.peek();
     }
         
     
